@@ -1,16 +1,13 @@
 namespace L2Veshkin5.Tests
 {
-    public class VkAPITests
+    public class VkAPITests: BaseTest
     {
-        [SetUp]
-        public void Setup()
+        [Test(Description = "TestMyPageFunctionality")]
+        public void TestMyPageFunctionality()
         {
-        }
-
-        [Test]
-        public void Test1()
-        {
-            Assert.Pass();
+            WelcomePage.ClearAndTypeLogin();
+            WelcomePage.ClickSignInButton();
+            EnterPasswordForm.ClickContinueButton();
         }
     }
 }
