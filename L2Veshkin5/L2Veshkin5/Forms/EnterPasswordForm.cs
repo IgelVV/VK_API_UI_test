@@ -1,5 +1,6 @@
 ﻿using Aquality.Selenium.Elements.Interfaces;
 using Aquality.Selenium.Forms;
+using L2Veshkin5.Utilities;
 using OpenQA.Selenium;
 
 namespace L2Veshkin5.Forms
@@ -16,5 +17,10 @@ namespace L2Veshkin5.Forms
         }
 
         public void ClickContinueButton() => ContinueButton.Click();
+
+        public void ClearAndTypePassword()
+        {
+            PasswordBox.ClearAndType(ConfigManager.Password);
+        }
     }
 }

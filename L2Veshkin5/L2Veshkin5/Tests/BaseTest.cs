@@ -15,9 +15,11 @@ namespace L2Veshkin5.Tests
 
         private WelcomePage? _welcomePage;
         private EnterPasswordForm? _enterPasswordForm;
+        private SideBarForm? _sideBarForm;
 
         protected WelcomePage WelcomePage => _welcomePage ??= new();
         protected EnterPasswordForm EnterPasswordForm => _enterPasswordForm ??= new();
+        protected SideBarForm SideBarForm=> _sideBarForm ??= new();
 
         [SetUp]
         public void Setup()
