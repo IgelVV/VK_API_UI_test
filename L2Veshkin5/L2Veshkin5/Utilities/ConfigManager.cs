@@ -15,6 +15,6 @@ namespace L2Veshkin5.Utilities
         public static string Login => s_loginUser.GetValue<string>("login");
         public static string Password => s_loginUser.GetValue<string>("password");
         public static string Token => s_loginUser.GetValue<string>("token");
-        public static int Id => s_loginUser.GetValue<int>("id");
+        public static int UserId => s_loginUser.GetValue<int>("userId");
     }
 }

@@ -13,6 +13,10 @@ namespace L2Veshkin5.Forms
         {
         }
 
-        public void ClickMyProfileButton() => MyProfileButton.Click();
+        public void ClickMyProfileButton()
+        {
+            MyProfileButton.State.WaitForClickable();
+            MyProfileButton.Click();
+        }
     }
 }
