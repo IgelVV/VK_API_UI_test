@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using RestSharp;
 using RestSharp.Serializers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace L2Veshkin5.VkAPI
 {
@@ -23,7 +24,7 @@ namespace L2Veshkin5.VkAPI
             request.AddObject(parameters);
 
             var response = _client.Post(request);
-            var postId = (int)JObject.Parse(response.Content)["response"]["post_id"];
+            var postId = (int)JObject.Parse(response.Content)["response"]["post_id"]; //to models
             return postId;
         }
 
@@ -93,6 +94,26 @@ namespace L2Veshkin5.VkAPI
             var response = _client.Post(request);
             var uploadUrl = JObject.Parse(response.Content)["response"]["upload_url"].ToString();
             return uploadUrl;
+        }
+
+        public int PostToCreateComment(int postId)
+        {
+            var text = RandomUtils.GenerateString();
+            var request = new RestRequest(APIEndpoints.WALL_CREATE_COMMENT);
+
+            var parameters = new
+            {
+                access_token = ConfigManager.Token,
+                owner_id = ConfigManager.UserId,
+                post_id = postId,
+                message = text,
+                v = ConfigManager.APIVersion
+            };
+            request.AddObject(parameters);
+
+            var response = _client.Post(request);
+            var commentId = (int)JObject.Parse(response.Content)["response"]["comment_id"]; //to models
+            return commentId;
         }
     }
 }
