@@ -7,7 +7,11 @@ namespace L2Veshkin5.Tests
 {
     public class VkAPITests: BaseTest
     {
-        // PostForm.GetAuthorId() - Хардкод?
+        // как использовать multipart/form-data
+        // Чем заголовки отличаются от параметров (в запросах) как указать заголовок в RestSharp?
+        // "photo" + {owner_id} + "_" + {photo_id} где взять photo_id? после save
+        
+
 
         [Test(Description = "TestMyPageFunctionality")]
         public void TestMyPageFunctionality()
@@ -29,10 +33,12 @@ namespace L2Veshkin5.Tests
             Assert.That(textToPost, Is.EqualTo(textFromCreatedPost), "Text doesn't match the one sent.");
             Assert.That(id, Is.EqualTo(ConfigManager.UserId), "Id doesn't match.");
 
-            vkApiRequest.PostToEditWall(postId);
+            var photoId = vkApiRequest.PostToEditWall(postId);
             AqualityServices.ConditionalWait.WaitFor(() => !createdPost.GetPostText().Equals(textFromCreatedPost));
             var textFromEditedPost = createdPost.GetPostText();
+            var pictureIdFromEditedPost = createdPost.GetPictureId();
             Assert.That(textFromCreatedPost, Is.Not.EqualTo(textFromEditedPost), "Text hasn't changed.");
+            Assert.That(pictureIdFromEditedPost.Equals(photoId), "Picture is not the same.");
         }
     }
 }

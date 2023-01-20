@@ -1,5 +1,6 @@
 ﻿using Aquality.Selenium.Elements.Interfaces;
 using Aquality.Selenium.Forms;
+using L2Veshkin5.Extetions;
 using L2Veshkin5.Utilities;
 using OpenQA.Selenium;
 using System.Text.RegularExpressions;
@@ -15,20 +16,24 @@ namespace L2Veshkin5.Forms
         private IButton WallPostAuthorButton =>
             FormElement.FindChildElement<IButton>(By.XPath("//*[contains(@class, 'post_author')]/a"), $"{nameof(WallPostAuthorButton)} {_postId}");
 
-        public PostForm(int postId): this(By.Id($"post{ConfigManager.UserId}_{postId}"), postId) { }
+        private ILabel WallPostPicture => 
+            FormElement.FindChildElement<ILabel>(By.XPath("//*[contains(@href,'photo')]"), $"{nameof(WallPostPicture)} {_postId}");
 
-        public PostForm(By locator, int postId) : base(locator, $"{nameof(PostForm)} {postId}")
+        public PostForm(int postId): base (By.Id($"post{ConfigManager.UserId}_{postId}"), $"{nameof(PostForm)} {postId}") 
         {
             _postId = postId;
         }
 
         public string GetPostText() => WallPostText.Text;
 
-        public int GetAuthorId()
+        public int GetAuthorId() => GetIdFromElementHref(WallPostAuthorButton);
+
+        public int GetPictureId() => GetIdFromElementHref(WallPostPicture);
+
+        private int GetIdFromElementHref(IElement element)
         {
-            var href = WallPostAuthorButton.GetAttribute("href");
-            var pattern = new Regex(@"\d+");
-            var value = pattern.Match(href).Value;
+            var pattern = new Regex(@"\d+$");
+            var value = pattern.Match(element.GetHref()).Value;
             int id = int.Parse(value);
             return id;
         }

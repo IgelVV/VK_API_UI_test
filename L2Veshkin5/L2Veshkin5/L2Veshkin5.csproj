@@ -28,7 +28,7 @@
     <None Update="Resources\config_data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\test_data.json">
+    <None Update="Resources\testPhoto.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
