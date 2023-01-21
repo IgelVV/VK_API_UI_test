@@ -4,7 +4,6 @@ using L2Veshkin5.Constants;
 using L2Veshkin5.Extetions;
 using L2Veshkin5.Utilities;
 using OpenQA.Selenium;
-using System.ComponentModel.Design;
 using System.Text.RegularExpressions;
 
 namespace L2Veshkin5.Forms
@@ -20,9 +19,11 @@ namespace L2Veshkin5.Forms
             FormElement.FindChildElement<ILabel>(By.XPath("//*[contains(@href,'photo')]"), $"{nameof(PostPicture)} {_postId}");
         private IButton ShowNextRepliesButton =>
             FormElement.FindChildElement<IButton>(By.ClassName("js-replies_next_label"), $"{nameof(ShowNextRepliesButton)} {_postId}");
+        private IButton ReactionsButton =>
+            FormElement.FindChildElement<IButton>(By.ClassName("PostButtonReactions-"), $"{nameof(ReactionsButton)} {_postId}");
 
-        private IButton Comment(int commentId) =>
-            FormElement.FindChildElement<IButton>(By.Id($"post{ConfigManager.UserId}_{commentId}"), $"{nameof(Comment)}{commentId} {_postId}");
+        private IButton AuthorOfComment(int commentId) =>
+            FormElement.FindChildElement<IButton>(By.XPath($"//*[@id='post{ConfigManager.UserId}_{commentId}']//*[contains(@class, 'reply_author')]/a"), $"{nameof(AuthorOfComment)}{commentId} {_postId}");
 
         public PostForm(int postId): base (By.Id($"post{ConfigManager.UserId}_{postId}"), $"{nameof(PostForm)} {postId}") 
         {
@@ -43,8 +44,6 @@ namespace L2Veshkin5.Forms
             return id;
         }
 
-        public void ScrollToTheCenter() => FormElement.JsActions.ScrollToTheCenter();
-
         public int GetAuthorOfCommentId(int commentId)
         {
             if (ShowNextRepliesButton.State.WaitForExist())
@@ -52,9 +51,23 @@ namespace L2Veshkin5.Forms
                 ShowNextRepliesButton.JsActions.ScrollToTheCenter();
                 ShowNextRepliesButton.Click();
             };
-            var comment = Comment(commentId);
-            var authorId = int.Parse(comment.GetAttribute(HtmlAttributes.AUTHOR_OF_POST_ID));
+            var authorOfComment = AuthorOfComment(commentId);
+            var authorId = int.Parse(authorOfComment.GetAttribute(HtmlAttributes.DATA_FROM_ID));
             return authorId;
+        }
+
+        public void Like()
+        {
+            ReactionsButton.JsActions.ScrollToTheCenter();
+            ReactionsButton.Click();
+        }
+
+        public bool IsReactionClicked() 
+        {
+            if (ReactionsButton.GetAttribute(HtmlAttributes.DATA_REACTION_USER_REACTION_ID) is not null)
+                return true;
+            else
+                return false;
         }
     }
 }

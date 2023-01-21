@@ -9,7 +9,6 @@ namespace L2Veshkin5.Forms
     {
         private IButton SignInButton => 
             ElementFactory.GetButton(By.XPath("//*[contains(@class,'VkIdForm__signInButton')]//*[contains(@class,'FlatButton__in')]"), nameof(SignInButton));
-
         private ITextBox LoginBox =>
             ElementFactory.GetTextBox(By.ClassName("VkIdForm__input"), nameof(LoginBox));
 

@@ -1,11 +1,9 @@
-﻿using L2Veshkin5.Utilities;
-using Newtonsoft.Json.Linq;
-using NUnit.Framework;
+﻿using L2Veshkin5.Constants;
+using L2Veshkin5.Models.VkResposes;
+using L2Veshkin5.Utilities;
 using RestSharp;
-using RestSharp.Serializers;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace L2Veshkin5.VkAPI
+namespace L2Veshkin5.API
 {
     public class VkAPI
     {
@@ -23,8 +21,8 @@ namespace L2Veshkin5.VkAPI
             };
             request.AddObject(parameters);
 
-            var response = _client.Post(request);
-            var postId = (int)JObject.Parse(response.Content)["response"]["post_id"]; //to models
+            var response = _client.Post<VkResponse>(request);
+            var postId = response.Response.PostId;
             return postId;
         }
 
@@ -40,7 +38,7 @@ namespace L2Veshkin5.VkAPI
                 owner_id = ConfigManager.UserId,
                 post_id = postId,
                 message = RandomUtils.GenerateString(),
-                attachments = $"photo{ConfigManager.UserId}_{mediaId}",
+                attachments = $"{VkTypes.PHOTO}{ConfigManager.UserId}_{mediaId}",
                 v = ConfigManager.APIVersion
             };
 
@@ -60,24 +58,24 @@ namespace L2Veshkin5.VkAPI
                 access_token = ConfigManager.Token,
                 user_id = ConfigManager.UserId,
                 v = ConfigManager.APIVersion,
-                server = (int)JObject.Parse(uploadedPhoto.Content)["server"],
-                hash = JObject.Parse(uploadedPhoto.Content)["hash"].ToString(),
-                photo = JObject.Parse(uploadedPhoto.Content)["photo"].ToString()
+                server = uploadedPhoto.Server,
+                hash = uploadedPhoto.Hash,
+                photo = uploadedPhoto.Photo
             };
             request.AddObject(parameters);
 
-            var response = _client.Post(request);
-            var photoId = (int)JObject.Parse(response.Content)["response"][0]["id"];
+            var response = _client.Post<VkResponseSaveWallPhoto>(request);
+            var photoId = response.Response[0].Id;
             return photoId;
         }
 
-        private RestResponse UploadPhoto()
+        private ResponseFromUploadServer UploadPhoto()
         {
             var uploadServer = GetWallUploadServer();
             var client = new RestClient(uploadServer);
             var request = new RestRequest();
             request.AddFile("photo", ConfigManager.TestPhotoPath, contentType: "multipart/form-data");
-            var response = client.Post(request);
+            var response = client.Post<ResponseFromUploadServer>(request);
             return response;
         }
 
@@ -91,8 +89,8 @@ namespace L2Veshkin5.VkAPI
             };
             request.AddObject(parameters);
 
-            var response = _client.Post(request);
-            var uploadUrl = JObject.Parse(response.Content)["response"]["upload_url"].ToString();
+            var response = _client.Post<VkResponse>(request);
+            var uploadUrl = response.Response.UploadUrl;
             return uploadUrl;
         }
 
@@ -111,9 +109,43 @@ namespace L2Veshkin5.VkAPI
             };
             request.AddObject(parameters);
 
-            var response = _client.Post(request);
-            var commentId = (int)JObject.Parse(response.Content)["response"]["comment_id"]; //to models
+            var response = _client.Post<VkResponse>(request);
+            var commentId = response.Response.CommentId;
             return commentId;
+        }
+
+        public int[] GetUsersWhoPutLikeUderPost(int postId)
+        {
+            var request = new RestRequest(APIEndpoints.LIKES_GET_LIST);
+
+            var parameters = new
+            {
+                access_token = ConfigManager.Token,
+                type = VkTypes.POST,
+                item_id = postId,
+                v = ConfigManager.APIVersion
+            };
+            request.AddObject(parameters);
+
+            var response = _client.Post<VkResponse>(request);
+            var usersWhoPutLike = response.Response.Items;
+            return usersWhoPutLike;
+        }
+
+        public void DeletePost(int postId)
+        {
+            var request = new RestRequest(APIEndpoints.WALL_DELETE);
+
+            var parameters = new
+            {
+                access_token = ConfigManager.Token,
+                owner_id = ConfigManager.UserId,
+                post_id = postId,
+                v = ConfigManager.APIVersion
+            };
+            request.AddObject(parameters);
+
+            _client.Post(request);
         }
     }
 }

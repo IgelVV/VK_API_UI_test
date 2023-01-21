@@ -16,7 +16,7 @@ namespace L2Veshkin5.Tests
         private WelcomePage? _welcomePage;
         private EnterPasswordForm? _enterPasswordForm;
         private SideBarForm? _sideBarForm;
-        private MyProfileForm _myProfileForm;
+        private MyProfileForm? _myProfileForm;
 
         protected WelcomePage WelcomePage => _welcomePage ??= new();
         protected EnterPasswordForm EnterPasswordForm => _enterPasswordForm ??= new();
