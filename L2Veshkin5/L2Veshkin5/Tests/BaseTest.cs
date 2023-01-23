@@ -27,8 +27,8 @@ namespace L2Veshkin5.Tests
         public void Setup()
         {
             Logger.Info($"Start scenario [{ScenarioName}]");
-            GoToPageStartPage();
-            SetScreenExpansionMaximize();
+            AqualityServices.Browser.GoTo(ConfigManager.StartUrl);
+            AqualityServices.Browser.Maximize();
         }
 
         [TearDown]
@@ -40,16 +40,6 @@ namespace L2Veshkin5.Tests
             {
                 AqualityServices.Browser.Quit();
             }
-        }
-
-        public static void SetScreenExpansionMaximize()
-        {
-            AqualityServices.Browser.Maximize();
-        }
-
-        public static void GoToPageStartPage()
-        {
-            AqualityServices.Browser.GoTo(ConfigManager.StartUrl);
         }
     }
 }

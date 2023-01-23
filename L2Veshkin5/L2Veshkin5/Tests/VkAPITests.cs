@@ -18,34 +18,34 @@ namespace L2Veshkin5.Tests
             EnterPasswordForm.ClickContinueButton();
             SideBarForm.ClickMyProfileButton();
 
-            var textToPost = RandomUtils.GenerateString();
-            var postId = vkApi.PostToCreateWallPost(textToPost);
+            string textToPost = RandomUtils.GenerateString();
+            int postId = vkApi.PostToCreateWallPost(textToPost);
             PostForm createdPost = MyProfileForm.GetPostById(postId);
-            var textFromCreatedPost = createdPost.GetPostText();
-            var id = createdPost.GetAuthorOfPostId();
+            string textFromCreatedPost = createdPost.GetPostText();
+            int id = createdPost.GetAuthorOfPostId();
 
             Assert.That(textToPost, Is.EqualTo(textFromCreatedPost), "Text doesn't match the one sent.");
             Assert.That(id, Is.EqualTo(ConfigManager.UserId), "Id doesn't match.");
 
-            var photoId = vkApi.PostToEditWall(postId);
+            int photoId = vkApi.PostToEditWall(postId);
             AqualityServices.ConditionalWait.WaitFor(() => !createdPost.GetPostText().Equals(textFromCreatedPost));
-            var textFromEditedPost = createdPost.GetPostText();
-            var pictureIdFromEditedPost = createdPost.GetPictureId();
+            string textFromEditedPost = createdPost.GetPostText();
+            int pictureIdFromEditedPost = createdPost.GetPictureId();
             Assert.That(textFromCreatedPost, Is.Not.EqualTo(textFromEditedPost), "Text hasn't changed.");
             Assert.That(pictureIdFromEditedPost, Is.EqualTo(photoId), "Picture is not the same.");
 
-            var commentId = vkApi.PostToCreateComment(postId);
-            var authorOfCommentId = createdPost.GetAuthorOfCommentId(commentId);
+            int commentId = vkApi.PostToCreateComment(postId);
+            int authorOfCommentId = createdPost.GetAuthorOfCommentId(commentId);
             Assert.That(authorOfCommentId, Is.EqualTo(ConfigManager.UserId), "There are no comments from the right user.");
 
             createdPost.Like();
             AqualityServices.ConditionalWait.WaitFor(() => createdPost.IsReactionClicked());
-            var likes = vkApi.GetUsersWhoPutLikeUderPost(postId);
+            int[] likes = vkApi.GetUsersWhoPutLikeUderPost(postId);
             Assert.That(likes.Contains(ConfigManager.UserId), Is.True, "There are no likes from the right user.");
 
             vkApi.DeletePost(postId);
-            var isPostDeleted = AqualityServices.ConditionalWait.WaitFor(() => ! createdPost.State.IsDisplayed);
-            Assert.That(isPostDeleted,Is.True, "The post hasn't been deleted.");
+            createdPost.State.WaitForDisplayed();
+            Assert.That(createdPost.State.IsDisplayed, Is.True, "The post hasn't been deleted.");
         }
     }
 }

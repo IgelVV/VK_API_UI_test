@@ -64,10 +64,7 @@ namespace L2Veshkin5.Forms
 
         public bool IsReactionClicked() 
         {
-            if (ReactionsButton.GetAttribute(HtmlAttributes.DATA_REACTION_USER_REACTION_ID) is not null)
-                return true;
-            else
-                return false;
+            return ReactionsButton.GetAttribute(HtmlAttributes.DATA_REACTION_USER_REACTION_ID) is not null;
         }
     }
 }
